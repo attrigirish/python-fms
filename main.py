@@ -3,8 +3,10 @@
 
 import dl
 from flight import Flight
+from booking import Booking
+from user import User
 
-def AddFlight():
+def AddFlight(userid):
         flightno=int(input("Enter Flight Number : "))
         name=input("Enter Flight Name : ")
         source=input("Enter Source : ")
@@ -87,21 +89,62 @@ def FlightMenu():
         SearchFlight()
     elif(option==0):
         return False
-
     return True
 
 
-#FlightMenu()
-    
+#Booking Module
+
+def AddBooking(userid):    
+    source=input("Enter Source Location : ")
+    destination=input("Enter Destination Location : ")
+    flights=list(filter(lambda x: x.GetSource()==source and x.GetDestination()==destination, dl.GetFlightDetails()))
+
+    print("Available Flights from ",source," to ",destination," are:")
+    print()
+    print("Flight No.\t\tName\t\tSource\t\tDestination\t\tFare\t\tAvailability")
+    print("-"*100)
+    for flight in flights:
+        print(flight.GetFlightNo(),end="\t\t\t")        
+        print(flight.GetName(),end="\t\t")        
+        print(flight.GetSource(),end="\t\t")        
+        print(flight.GetDestination(),end="\t\t\t")        
+        print(flight.GetFare(),end="\t\t")        
+        availability=flight.GetAvailability().split(',')
+        days=['S','M','T','W','T','F','S']
+        for i in range(availability.__len__()):
+            if(availability[i]=='1'):
+                print(days[i],end=' ')
 
 
-def BookingMenu():
+
+    bookingid=int(input("Enter Booking Id : "))
+    flightno=int(input("Enter Flight Number : "))
+    bookingdate=input("Enter Booking Date (Y-M-D) : ")
+
+    booking=Booking(bookingid,userid,flightno,bookingdate)
+    if(dl.SaveBooking(booking)):
+        print("Flight Booked Successfull")
+    else:
+        print("Please Try Again!!")
+
+
+
+def BookingMenu(userid):
     print("1. Book Flight")
     print("2. Check Your Bookings")
     print("3. Cancel Booking")
     print("4. Check Cancelled Bookings")
     print("5. Update Profile")
+    print("0. Exit")
 
+    option=int(input("Enter Choice : "))
+
+    if(option==1):
+        AddBooking(userid)
+    elif(option==2):
+        DisplayBookings()
+    elif(option==0):        
+        return false
     
         
 
@@ -131,11 +174,11 @@ def Login():
     print(user.GetType())
     if(user!=None):
         if(user.GetType()=="1"):      #User is Admin
-            while FlightMenu():
+            while FlightMenu(userid.GetUserId()):
                 pass
         else:                       #User is User
-            BookingMenu()
-            None
+            while BookingMenu(userid.GetUserId()):
+                pass
     else:
         print("Login Failed")
 

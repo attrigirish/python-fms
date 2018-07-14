@@ -38,11 +38,11 @@ def UpdateFlightName(flightno,name):
 def GetFlightDetails():
     cur=con.cursor()
     cur.execute("SELECT * FROM FLIGHT")
-    data=con.fetchall()
+    data=cur.fetchall()
 
     flights=[]
     for record in data:
-        flight=Flight(data[0],data[1],data[2],data[3],data[4],data[5])
+        flight=Flight(record[0],record[1],record[2],record[3],record[4],record[5])
         flights.append(flight)
     return flights
     
